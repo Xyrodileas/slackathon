@@ -58,7 +58,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-		BASE_DIR + '/slackServices/template/'  
+		'/var/www/html/slackathon/template',
 		],
         #'APP_DIRS': True,
         'OPTIONS': {
@@ -68,9 +68,12 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 	    ],
-	    'loaders': [
-		'django.template.loaders.app_directories.Loader'
-	    ]
+	'loaders': [
+            ('django.template.loaders.cached.Loader', [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ]),
+        ],
 	}
     },
 ]
@@ -127,3 +130,32 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 SLACK_TOKEN = 'xoxp-33332867413-46170708884-48203831046-a82fe20e4a'
+
+SLACK_CHANNEL = 'brainfreeze'
+SLACK_USERNAME = 'jerem'
+
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'slack_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django_slack.log.SlackExceptionHandler',
+	    'filename': os.path.join(BASE_DIR, 'APPNAME.log'),
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+        },
+    },
+    'loggers': {
+        'django': {
+            'level': 'ERROR',
+            'handlers': ['slack_admins'],
+        },
+    },
+}
+
