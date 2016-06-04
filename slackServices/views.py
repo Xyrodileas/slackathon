@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from django_slack import slack_message
 from django.http import HttpResponse
 from slacker import Slacker
 # Create your views here.
@@ -17,6 +15,6 @@ def home(request):
     users = response.body['members']
 
     # Upload a file
-    slack.files.upload('hello.txt')
+    #slack.files.upload('hello.txt')
     html = "<html><body>It is now.</body></html>"
     return HttpResponse(html)
