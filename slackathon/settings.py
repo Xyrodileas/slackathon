@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_slack',
     'slackServices',
 ]
 
@@ -134,28 +133,4 @@ SLACK_TOKEN = 'xoxp-33332867413-46170708884-48203831046-a82fe20e4a'
 SLACK_CHANNEL = 'brainfreeze'
 SLACK_USERNAME = 'jerem'
 
-LOGGING = {
-    'version': 1,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        },
-    },
-    'handlers': {
-        'slack_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django_slack.log.SlackExceptionHandler',
-	    'filename': os.path.join(BASE_DIR, 'APPNAME.log'),
-            'maxBytes': 1024*1024*15, # 15MB
-            'backupCount': 10,
-        },
-    },
-    'loggers': {
-        'django': {
-            'level': 'ERROR',
-            'handlers': ['slack_admins'],
-        },
-    },
-}
 
