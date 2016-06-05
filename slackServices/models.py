@@ -5,10 +5,22 @@ from picklefield.fields import PickledObjectField
 from jsonfield import JSONField
 
 
-
 class Session(models.Model):
-    etat = models.BinaryField(default=True)
+    state = models.BinaryField(default=True)
     instance = PickledObjectField()
+    channels = models.ManyToManyField('Channel')
+
+    def __init__(self, client):
+        self.instance = client
+
+    def connect(self):
+        return self.instance.rtm_connect()
+
+    def fetch(self):
+        return self.instance.rtm_read()
+
+    def send_message(self, chan, txt, usr='ShareWithMe', icon=':robot_face:'):
+        self.ClientConnection.api_call("chat.postMessage", channel=chan, text=txt, username=usr, icon_emoji=icon)
 
 
 class Bot(models.Model):
@@ -40,10 +52,15 @@ class User(models.Model):
     reputation = models.ForeignKey(to=Reputation)
     user_stat = models.ForeignKey(to=Stat)
 
+    @staticmethod
+    def get_firstname_by_id(id):
+        return User.objects.get(id=id)
+
 
 class Message(models.Model):
     type = models.TextField(null=False)
     is_channel = models.BinaryField(null=False)
+    is_question = models.BinaryField(null=False)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(to=User, related_name="author")
     to_users = models.ManyToManyField(to=User, related_name="receivers")

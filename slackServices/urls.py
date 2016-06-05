@@ -1,7 +1,6 @@
 from django.conf.urls import url
-
-from . import views
+import listener
 
 urlpatterns = [
-    url(r'^$', views.home),
+    url(r'^$', listener.activate_listener),
 ]
